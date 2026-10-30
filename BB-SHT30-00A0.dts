@@ -1,0 +1,21 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "ti,beaglebone", "ti,beaglebone-black";
+
+    fragment@0 {
+        target = <&i2c2>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            sht30: sht30@44 {
+                compatible = "sensirion,sht30", "sensirion,sht3x";
+                reg = <0x44>;
+                status = "okay";
+            };
+        };
+    };
+};
