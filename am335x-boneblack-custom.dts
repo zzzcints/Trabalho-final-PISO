@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: GPL-2.0
+/dts-v1/;
+
+#include "am335x-boneblack.dts"
+
+/ {
+    model = "TI AM335x BeagleBone Black - TPSE2 Custom LEDs e Buzzer, i2c 5.0";
+    compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+
+    /* declaracao de um no proprietario para noo driver */
+    tpse2_hardware {
+        compatible = "ufc,tpse2-led-device";
+        status = "okay";
+        pinctrl-names = "default";
+        debug-message = "Plataforma inicializada pelo Device Tree!";
+    };
+
+    leds {
+        compatible = "gpio-leds";
+        pinctrl-names = "default";
+
+        tpse2_external_led: external-led {
+            label = "tpse2:external:led";
+            gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>; /*P9_41*/
+            linux,default-trigger = "heartbeat";
+        };
+    };
+};
+
+&am33xx_pinmux {
+    external_led_pins: pinmux_external_led_pins {
+        pinctrl-single,pins = <
+            0x1b4 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) /* P9_41 = gpio0_20 */
+        >;
+    };
+
+    ehrpwm1_pins: pinmux_ehrpwm1_pins {
+        pinctrl-single,pins = <
+            0x048 (PIN_OUTPUT_PULLDOWN | MUX_MODE6) /* P9_14 = ehrpwm1A */
+        >;
+    };
+    i2c2_pins: pinmux_i2c2_pins {
+        pinctrl-single,pins = <
+            0x178 (PIN_INPUT_PULLUP | MUX_MODE3) /*p9_20 i2c2_sda*/
+            0x17c (PIN_INPUT_PULLUP | MUX_MODE3) /*p9_19 i2c2 scl*/
+        >;
+    };
+};
+
+&epwmss1 {
+    status = "okay";
+};
+
+&ehrpwm1 {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&ehrpwm1_pins>;
+};
+
+&i2c2 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&i2c2_pins>;
+    status = "okay";
+    clock-frequency = <100000>;
+};
